@@ -1,0 +1,17 @@
+# .NET build output (applies to all .NET projects in this repo)
+bin/
+obj/
+
+# .cursor/plans is an NTFS directory junction to CursorLog/ (the canonical
+# plan location per .cursor/rules/plans-in-cursorlog.mdc), created at the repo
+# root and inside per-project workspace folders (e.g. NETCore-PDF-Service/).
+# Git walks into junctions like normal directories on Windows, so without this
+# every plan file would get committed twice more under these paths. The rest
+# of .cursor/ (e.g. .cursor/rules/) is real content and stays tracked.
+**/.cursor/plans/
+
+# SQLite WAL journal sidecar files are transient/uncheckpointed and should
+# never be committed. The main .db file itself IS tracked (see below) so
+# it can be consumed directly by other contributors.
+*.db-shm
+*.db-wal

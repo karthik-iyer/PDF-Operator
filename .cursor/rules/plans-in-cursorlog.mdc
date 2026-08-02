@@ -1,0 +1,13 @@
+---
+description: Store durable Cursor plans under CursorLog/
+alwaysApply: true
+---
+
+# Plans live in CursorLog
+
+All durable plans, ADR-style design notes, roadmap slices, and implementation plans for this repository belong in [`CursorLog/`](CursorLog/).
+
+- Create or update plans as Markdown files under `CursorLog/`.
+- After creating a plan in Plan mode, use **Save to workspace** so the canonical copy lands in `CursorLog/` (via the `.cursor/plans` junction).
+- Do **not** leave the canonical copy only in `~/.cursor/plans`, the repo root, or chat-only artifacts.
+- Prefer clear filenames such as `Topic_Name.md` or `topic-name.plan.md`.
