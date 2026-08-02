@@ -15,3 +15,7 @@ obj/
 # it can be consumed directly by other contributors.
 *.db-shm
 *.db-wal
+
+# Azurite's local emulated storage data (blobs/queues/tables) - purely local
+# runtime state, never meant to be shared via source control.
+**/.azurite/

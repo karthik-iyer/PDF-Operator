@@ -228,4 +228,179 @@ public class DocumentEndpointsTests
     }
 
     #endregion
+
+    #region PutDocumentAsync
+
+    [Fact]
+    public async Task PutDocumentAsync_ReturnsBadRequest_WhenRequestHasNoFormContentType()
+    {
+        var id = Guid.NewGuid();
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        var context = CreateHttpContext(storageServiceMock.Object);
+
+        var result = await DocumentEndpoints.PutDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        var statusResult = Assert.IsAssignableFrom<IStatusCodeHttpResult>(result);
+        Assert.Equal(StatusCodes.Status400BadRequest, statusResult.StatusCode);
+        storageServiceMock.Verify(
+            s => s.UpsertAsync(It.IsAny<Guid>(), It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task PutDocumentAsync_ReturnsBadRequest_WhenFileIsNotPdf()
+    {
+        var id = Guid.NewGuid();
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        var context = CreateHttpContext(storageServiceMock.Object);
+        var file = CreateFormFile("notes.txt", "text/plain");
+        context.Request.ContentType = "multipart/form-data; boundary=test";
+        context.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), new FormFileCollection { file });
+
+        var result = await DocumentEndpoints.PutDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        var statusResult = Assert.IsAssignableFrom<IStatusCodeHttpResult>(result);
+        Assert.Equal(StatusCodes.Status400BadRequest, statusResult.StatusCode);
+        storageServiceMock.Verify(
+            s => s.UpsertAsync(It.IsAny<Guid>(), It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task PutDocumentAsync_ReturnsCreated_WhenServiceReportsNewDocument()
+    {
+        var id = Guid.NewGuid();
+        var expectedDocument = new Document
+        {
+            Id = id,
+            FileName = "report.pdf",
+            BlobUrl = $"http://127.0.0.1:10000/devstoreaccount1/documents/{id}.pdf",
+            UploadedAt = DateTimeOffset.UtcNow
+        };
+
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        storageServiceMock
+            .Setup(s => s.UpsertAsync(id, It.IsAny<Stream>(), "report.pdf", It.IsAny<CancellationToken>()))
+            .ReturnsAsync((expectedDocument, true));
+
+        var context = CreateHttpContext(storageServiceMock.Object);
+        var file = CreateFormFile("report.pdf", "application/pdf");
+        context.Request.ContentType = "multipart/form-data; boundary=test";
+        context.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), new FormFileCollection { file });
+
+        var result = await DocumentEndpoints.PutDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        var createdResult = Assert.IsType<Created<Document>>(result);
+        Assert.Equal($"/documents/{id}", createdResult.Location);
+        Assert.Equal(expectedDocument, createdResult.Value);
+    }
+
+    [Fact]
+    public async Task PutDocumentAsync_ReturnsOk_WhenServiceReportsReplacedDocument()
+    {
+        var id = Guid.NewGuid();
+        var expectedDocument = new Document
+        {
+            Id = id,
+            FileName = "replacement.pdf",
+            BlobUrl = $"http://127.0.0.1:10000/devstoreaccount1/documents/{id}.pdf",
+            UploadedAt = DateTimeOffset.UtcNow
+        };
+
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        storageServiceMock
+            .Setup(s => s.UpsertAsync(id, It.IsAny<Stream>(), "replacement.pdf", It.IsAny<CancellationToken>()))
+            .ReturnsAsync((expectedDocument, false));
+
+        var context = CreateHttpContext(storageServiceMock.Object);
+        var file = CreateFormFile("replacement.pdf", "application/pdf");
+        context.Request.ContentType = "multipart/form-data; boundary=test";
+        context.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), new FormFileCollection { file });
+
+        var result = await DocumentEndpoints.PutDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        var okResult = Assert.IsType<Ok<Document>>(result);
+        Assert.Equal(expectedDocument, okResult.Value);
+    }
+
+    [Fact]
+    public async Task PutDocumentAsync_ReturnsProblem_WhenStorageServiceThrows()
+    {
+        var id = Guid.NewGuid();
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        storageServiceMock
+            .Setup(s => s.UpsertAsync(It.IsAny<Guid>(), It.IsAny<Stream>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("blob storage unreachable"));
+
+        var context = CreateHttpContext(storageServiceMock.Object);
+        var file = CreateFormFile("report.pdf", "application/pdf");
+        context.Request.ContentType = "multipart/form-data; boundary=test";
+        context.Request.Form = new FormCollection(new Dictionary<string, StringValues>(), new FormFileCollection { file });
+
+        var result = await DocumentEndpoints.PutDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        var statusResult = Assert.IsAssignableFrom<IStatusCodeHttpResult>(result);
+        Assert.Equal(StatusCodes.Status500InternalServerError, statusResult.StatusCode);
+    }
+
+    #endregion
+
+    #region DownloadDocumentAsync
+
+    [Fact]
+    public async Task DownloadDocumentAsync_ReturnsNotFound_WhenServiceReturnsNull()
+    {
+        var id = Guid.NewGuid();
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        storageServiceMock
+            .Setup(s => s.DownloadAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((DocumentContent?)null);
+
+        var context = CreateHttpContext(storageServiceMock.Object);
+
+        var result = await DocumentEndpoints.DownloadDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        Assert.IsType<NotFound>(result);
+    }
+
+    [Fact]
+    public async Task DownloadDocumentAsync_ReturnsFileStream_WhenDocumentExists()
+    {
+        var id = Guid.NewGuid();
+        using var pdfStream = new MemoryStream(new byte[] { 1, 2, 3 });
+        var content = new DocumentContent(pdfStream, "application/pdf", "report.pdf");
+
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        storageServiceMock
+            .Setup(s => s.DownloadAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(content);
+
+        var context = CreateHttpContext(storageServiceMock.Object);
+
+        var result = await DocumentEndpoints.DownloadDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        var fileResult = Assert.IsType<FileStreamHttpResult>(result);
+        Assert.Same(pdfStream, fileResult.FileStream);
+        Assert.Equal("application/pdf", fileResult.ContentType);
+        Assert.Equal("report.pdf", fileResult.FileDownloadName);
+    }
+
+    [Fact]
+    public async Task DownloadDocumentAsync_ReturnsProblem_WhenServiceThrows()
+    {
+        var id = Guid.NewGuid();
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        storageServiceMock
+            .Setup(s => s.DownloadAsync(id, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("blob storage unreachable"));
+
+        var context = CreateHttpContext(storageServiceMock.Object);
+
+        var result = await DocumentEndpoints.DownloadDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        var statusResult = Assert.IsAssignableFrom<IStatusCodeHttpResult>(result);
+        Assert.Equal(StatusCodes.Status500InternalServerError, statusResult.StatusCode);
+    }
+
+    #endregion
 }

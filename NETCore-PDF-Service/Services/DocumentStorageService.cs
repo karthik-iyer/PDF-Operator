@@ -1,3 +1,4 @@
+using Azure;
 using Azure.Storage.Blobs;
 using NETCore_PDF_Service.Data;
 using NETCore_PDF_Service.Models;
@@ -17,23 +18,62 @@ public class DocumentStorageService : IDocumentStorageService
 
     public async Task<Document> UploadAsync(Stream pdfStream, string fileName, CancellationToken cancellationToken = default)
     {
-        var id = Guid.NewGuid();
-        var blobName = $"{id}{Path.GetExtension(fileName)}";
-
-        var blobClient = _containerClient.GetBlobClient(blobName);
-        await blobClient.UploadAsync(pdfStream, overwrite: true, cancellationToken);
-
-        var document = new Document
-        {
-            Id = id,
-            FileName = fileName,
-            BlobUrl = blobClient.Uri.ToString(),
-            UploadedAt = DateTimeOffset.UtcNow
-        };
-
-        _dbContext.Documents.Add(document);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-
+        // A freshly generated id can never collide with an existing row, so this is always
+        // the "create" branch of UpsertAsync - reusing it avoids duplicating the
+        // blob-upload/save logic between the two entry points.
+        var (document, _) = await UpsertAsync(Guid.NewGuid(), pdfStream, fileName, cancellationToken);
         return document;
     }
+
+    public async Task<(Document Document, bool Created)> UpsertAsync(
+        Guid id, Stream pdfStream, string fileName, CancellationToken cancellationToken = default)
+    {
+        // Blob name depends only on id + extension (always ".pdf"), so replacing a document's
+        // file overwrites the same blob in place rather than orphaning the previous one.
+        var blobClient = _containerClient.GetBlobClient(GetBlobName(id, fileName));
+        await blobClient.UploadAsync(pdfStream, overwrite: true, cancellationToken);
+
+        var document = await _dbContext.Documents.FindAsync(new object?[] { id }, cancellationToken);
+        var created = document is null;
+
+        if (document is null)
+        {
+            document = new Document { Id = id };
+            _dbContext.Documents.Add(document);
+        }
+
+        document.FileName = fileName;
+        document.BlobUrl = blobClient.Uri.ToString();
+        document.UploadedAt = DateTimeOffset.UtcNow;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return (document, created);
+    }
+
+    public async Task<DocumentContent?> DownloadAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var document = await _dbContext.Documents.FindAsync(new object?[] { id }, cancellationToken);
+        if (document is null)
+        {
+            return null;
+        }
+
+        var blobClient = _containerClient.GetBlobClient(GetBlobName(document.Id, document.FileName));
+
+        try
+        {
+            var stream = await blobClient.OpenReadAsync(cancellationToken: cancellationToken);
+            return new DocumentContent(stream, "application/pdf", document.FileName);
+        }
+        catch (RequestFailedException ex) when (ex.Status == 404)
+        {
+            // Orphaned metadata row (blob was deleted/never written) - treat as not found.
+            return null;
+        }
+    }
+
+    // Blob name is derived from the id + original extension rather than parsed back out of
+    // the stored BlobUrl, so it stays correct even if the storage backend/URL format changes.
+    private static string GetBlobName(Guid id, string fileName) => $"{id}{Path.GetExtension(fileName)}";
 }
