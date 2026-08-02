@@ -273,4 +273,56 @@ public class DocumentStorageServiceTests
     }
 
     #endregion
+
+    #region DeleteAsync
+
+    [Fact]
+    public async Task DeleteAsync_ReturnsFalse_WhenDocumentDoesNotExist()
+    {
+        using var dbFixture = new SqliteInMemoryAppDbContext();
+        var containerClientMock = new Mock<BlobContainerClient>();
+        var sut = new DocumentStorageService(containerClientMock.Object, dbFixture.Context);
+
+        var result = await sut.DeleteAsync(Guid.NewGuid());
+
+        Assert.False(result);
+        containerClientMock.Verify(c => c.GetBlobClient(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_RemovesRowAndDeletesBlob_WhenDocumentExists()
+    {
+        using var dbFixture = new SqliteInMemoryAppDbContext();
+        var document = new Document
+        {
+            Id = Guid.NewGuid(),
+            FileName = "report.pdf",
+            BlobUrl = "http://127.0.0.1:10000/devstoreaccount1/documents/whatever.pdf",
+            UploadedAt = DateTimeOffset.UtcNow
+        };
+        dbFixture.Context.Documents.Add(document);
+        await dbFixture.Context.SaveChangesAsync();
+
+        var blobClientMock = new Mock<BlobClient>();
+        blobClientMock
+            .Setup(c => c.DeleteIfExistsAsync(It.IsAny<DeleteSnapshotsOption>(), It.IsAny<BlobRequestConditions>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Azure.Response<bool>)null!);
+
+        var containerClientMock = new Mock<BlobContainerClient>();
+        containerClientMock
+            .Setup(c => c.GetBlobClient($"{document.Id}.pdf"))
+            .Returns(blobClientMock.Object);
+
+        var sut = new DocumentStorageService(containerClientMock.Object, dbFixture.Context);
+
+        var result = await sut.DeleteAsync(document.Id);
+
+        Assert.True(result);
+        Assert.Equal(0, await dbFixture.Context.Documents.CountAsync());
+        blobClientMock.Verify(
+            c => c.DeleteIfExistsAsync(It.IsAny<DeleteSnapshotsOption>(), It.IsAny<BlobRequestConditions>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    #endregion
 }

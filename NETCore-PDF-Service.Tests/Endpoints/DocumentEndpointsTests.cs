@@ -403,4 +403,57 @@ public class DocumentEndpointsTests
     }
 
     #endregion
+
+    #region DeleteDocumentAsync
+
+    [Fact]
+    public async Task DeleteDocumentAsync_ReturnsNoContent_WhenServiceReportsDeleted()
+    {
+        var id = Guid.NewGuid();
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        storageServiceMock
+            .Setup(s => s.DeleteAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        var context = CreateHttpContext(storageServiceMock.Object);
+
+        var result = await DocumentEndpoints.DeleteDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        Assert.IsType<NoContent>(result);
+    }
+
+    [Fact]
+    public async Task DeleteDocumentAsync_ReturnsNotFound_WhenServiceReportsNoDocument()
+    {
+        var id = Guid.NewGuid();
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        storageServiceMock
+            .Setup(s => s.DeleteAsync(id, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        var context = CreateHttpContext(storageServiceMock.Object);
+
+        var result = await DocumentEndpoints.DeleteDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        Assert.IsType<NotFound>(result);
+    }
+
+    [Fact]
+    public async Task DeleteDocumentAsync_ReturnsProblem_WhenServiceThrows()
+    {
+        var id = Guid.NewGuid();
+        var storageServiceMock = new Mock<IDocumentStorageService>();
+        storageServiceMock
+            .Setup(s => s.DeleteAsync(id, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new InvalidOperationException("blob storage unreachable"));
+
+        var context = CreateHttpContext(storageServiceMock.Object);
+
+        var result = await DocumentEndpoints.DeleteDocumentAsync(id, context, NullLoggerFactory.Instance);
+
+        var statusResult = Assert.IsAssignableFrom<IStatusCodeHttpResult>(result);
+        Assert.Equal(StatusCodes.Status500InternalServerError, statusResult.StatusCode);
+    }
+
+    #endregion
 }

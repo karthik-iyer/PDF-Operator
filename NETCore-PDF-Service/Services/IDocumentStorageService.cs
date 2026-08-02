@@ -19,4 +19,11 @@ public interface IDocumentStorageService
     /// </summary>
     Task<(Document Document, bool Created)> UpsertAsync(
         Guid id, Stream pdfStream, string fileName, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes the document and its underlying blob (if any). Returns <see langword="true"/>
+    /// if a document was found and deleted, <see langword="false"/> if no document exists for
+    /// <paramref name="id"/>.
+    /// </summary>
+    Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

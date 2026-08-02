@@ -45,6 +45,14 @@ public static class DocumentEndpoints
             .WithName("DownloadDocument")
             .WithSummary("Download a document's PDF file content")
             .WithTags("Documents");
+
+        app.MapDelete("/documents/{id:guid}", DeleteDocumentAsync)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .WithName("DeleteDocument")
+            .WithSummary("Delete a document and its underlying PDF file")
+            .WithTags("Documents");
     }
 
     internal static string? ValidateFile(IFormFile? file)
@@ -167,6 +175,27 @@ public static class DocumentEndpoints
         {
             logger.LogError(ex, "Failed to download document {DocumentId}", id);
             return Results.Problem("Failed to download document.", statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    internal static async Task<IResult> DeleteDocumentAsync(
+        Guid id,
+        HttpContext context,
+        ILoggerFactory loggerFactory)
+    {
+        var logger = loggerFactory.CreateLogger(nameof(DocumentEndpoints));
+
+        try
+        {
+            var storageService = context.RequestServices.GetRequiredService<IDocumentStorageService>();
+            var deleted = await storageService.DeleteAsync(id);
+
+            return deleted ? Results.NoContent() : Results.NotFound();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to delete document {DocumentId}", id);
+            return Results.Problem("Failed to delete document.", statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 }

@@ -73,6 +73,26 @@ public class DocumentStorageService : IDocumentStorageService
         }
     }
 
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var document = await _dbContext.Documents.FindAsync(new object?[] { id }, cancellationToken);
+        if (document is null)
+        {
+            return false;
+        }
+
+        // Deleted before the DB row so a failure here leaves the document "still existing"
+        // (consistent, retryable) rather than a DB row pointing at nothing. DeleteIfExistsAsync
+        // (not DeleteAsync) so an already-orphaned blob doesn't turn a cleanup delete into a 500.
+        var blobClient = _containerClient.GetBlobClient(GetBlobName(document.Id, document.FileName));
+        await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
+
+        _dbContext.Documents.Remove(document);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
+
     // Blob name is derived from the id + original extension rather than parsed back out of
     // the stored BlobUrl, so it stays correct even if the storage backend/URL format changes.
     private static string GetBlobName(Guid id, string fileName) => $"{id}{Path.GetExtension(fileName)}";

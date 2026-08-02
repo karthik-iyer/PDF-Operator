@@ -194,10 +194,20 @@ curl -o downloaded.pdf http://localhost:5092/documents/bb1f25dc-34bd-465a-bf13-e
 
 **Response:** `200 OK` with the raw PDF bytes, or `404 Not Found` if the id doesn't exist (or its blob is missing).
 
+### `DELETE /documents/{id}` — Delete a document
+
+Deletes both the metadata row and the underlying blob.
+
+```bash
+curl -X DELETE http://localhost:5092/documents/bb1f25dc-34bd-465a-bf13-e629b81dd094
+```
+
+**Response:** `204 No Content` on success, `404 Not Found` if the id doesn't exist.
+
 ## Testing from Postman
 
 - `POST`/`PUT`: set the body type to **form-data**, add a key named `file`, set its type to **File**, and choose a PDF from disk.
-- `GET`/`GET .../download`: no body needed.
+- `GET`/`GET .../download`/`DELETE`: no body needed.
 
 ## Running Tests
 
