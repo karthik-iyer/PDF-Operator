@@ -9,12 +9,14 @@ public static class DocumentEndpoints
 {
     public static void MapDocumentEndpoints(this WebApplication app)
     {
-        // .Accepts<IFormFile>(...) documents the multipart file upload for Swagger even though
-        // the handlers read the form manually from HttpContext rather than binding IFormFile as
-        // a parameter (see ReadAndValidateFileAsync) - without it, Swagger has no way to know
-        // these endpoints expect a file and won't render a file-picker in "Try it out".
+        // .Accepts<FileUploadRequest>(...) documents the multipart file upload for Swagger even
+        // though the handlers read the form manually from HttpContext rather than binding IFormFile
+        // as a parameter (see ReadAndValidateFileAsync). FileUploadRequest (not bare IFormFile) is
+        // required so Swashbuckle emits an object schema with a named "file" property - otherwise
+        // it emits a nameless string/binary schema, and Swagger UI's file picker has no field name
+        // to send the upload under, so the server's form.Files.GetFile("file") lookup never matches.
         app.MapPost("/documents", PostDocumentAsync)
-            .Accepts<IFormFile>("multipart/form-data")
+            .Accepts<FileUploadRequest>("multipart/form-data")
             .Produces<Document>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
@@ -23,7 +25,7 @@ public static class DocumentEndpoints
             .WithTags("Documents");
 
         app.MapPut("/documents/{id:guid}", PutDocumentAsync)
-            .Accepts<IFormFile>("multipart/form-data")
+            .Accepts<FileUploadRequest>("multipart/form-data")
             .Produces<Document>(StatusCodes.Status200OK)
             .Produces<Document>(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status400BadRequest)
@@ -36,6 +38,13 @@ public static class DocumentEndpoints
             .Produces<List<Document>>(StatusCodes.Status200OK)
             .WithName("ListDocuments")
             .WithSummary("List all documents, most recently uploaded first")
+            .WithTags("Documents");
+
+        app.MapGet("/documents/{id:guid}", GetDocumentByIdAsync)
+            .Produces<Document>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .WithName("GetDocumentById")
+            .WithSummary("Get a single document's metadata by id")
             .WithTags("Documents");
 
         app.MapGet("/documents/{id:guid}/download", DownloadDocumentAsync)
@@ -153,6 +162,12 @@ public static class DocumentEndpoints
             .ToList();
 
         return Results.Ok(documents);
+    }
+
+    internal static async Task<IResult> GetDocumentByIdAsync(Guid id, AppDbContext db)
+    {
+        var document = await db.Documents.FindAsync(id);
+        return document is null ? Results.NotFound() : Results.Ok(document);
     }
 
     internal static async Task<IResult> DownloadDocumentAsync(

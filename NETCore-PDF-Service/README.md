@@ -184,6 +184,14 @@ curl http://localhost:5092/documents
 ]
 ```
 
+### `GET /documents/{id}` — Get a single document's metadata
+
+```bash
+curl http://localhost:5092/documents/bb1f25dc-34bd-465a-bf13-e629b81dd094
+```
+
+**Response:** `200 OK` with the same document shape as `GET /documents`, or `404 Not Found` if the id doesn't exist.
+
 ### `GET /documents/{id}/download` — Download a document's PDF content
 
 Streams the actual PDF bytes back with `Content-Type: application/pdf` and a `Content-Disposition: attachment` header carrying the original filename.

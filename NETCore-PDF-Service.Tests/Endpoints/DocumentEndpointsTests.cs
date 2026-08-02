@@ -229,6 +229,41 @@ public class DocumentEndpointsTests
 
     #endregion
 
+    #region GetDocumentByIdAsync
+
+    [Fact]
+    public async Task GetDocumentByIdAsync_ReturnsDocument_WhenItExists()
+    {
+        using var dbFixture = new SqliteInMemoryAppDbContext();
+        var document = new Document
+        {
+            Id = Guid.NewGuid(),
+            FileName = "report.pdf",
+            BlobUrl = "http://a",
+            UploadedAt = DateTimeOffset.UtcNow
+        };
+        dbFixture.Context.Documents.Add(document);
+        await dbFixture.Context.SaveChangesAsync();
+
+        var result = await DocumentEndpoints.GetDocumentByIdAsync(document.Id, dbFixture.Context);
+
+        var okResult = Assert.IsType<Ok<Document>>(result);
+        Assert.Equal(document.Id, okResult.Value!.Id);
+        Assert.Equal(document.FileName, okResult.Value.FileName);
+    }
+
+    [Fact]
+    public async Task GetDocumentByIdAsync_ReturnsNotFound_WhenItDoesNotExist()
+    {
+        using var dbFixture = new SqliteInMemoryAppDbContext();
+
+        var result = await DocumentEndpoints.GetDocumentByIdAsync(Guid.NewGuid(), dbFixture.Context);
+
+        Assert.IsType<NotFound>(result);
+    }
+
+    #endregion
+
     #region PutDocumentAsync
 
     [Fact]

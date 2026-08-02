@@ -39,6 +39,7 @@ Then open **http://localhost:5092/swagger** for interactive API docs, or use the
 | `POST` | `/documents` | Upload a new PDF (server generates the id) |
 | `PUT` | `/documents/{id}` | Create at a specific id, or replace the file if it already exists (upsert) |
 | `GET` | `/documents` | List all documents, most recent first |
+| `GET` | `/documents/{id}` | Get a single document's metadata |
 | `GET` | `/documents/{id}/download` | Download a document's PDF bytes |
 | `DELETE` | `/documents/{id}` | Delete a document and its underlying file |
 

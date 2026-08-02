@@ -51,9 +51,11 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "NETCore PDF Service API v1");
     });
-}
 
-app.MapGet("/", () => "Hello World!");
+    // Convenience only: point browsers hitting the bare root at the docs instead of a 404.
+    // Scoped to Development since Swagger UI itself isn't mapped in other environments.
+    app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+}
 
 app.MapDocumentEndpoints();
 
