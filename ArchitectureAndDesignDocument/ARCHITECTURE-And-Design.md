@@ -57,16 +57,10 @@ The server is the source of truth only for **persisted metadata** (filename, blo
 - **No SAS token issuance**: uploads/downloads are proxied through the API rather than using short-lived SAS URLs issued to the client. This is simpler to build but means the API is in the request path for every upload; a production version would issue SAS tokens so the client talks to blob storage directly.
 - **Blob-based viewer loading loses native HTTP range requests**: the viewer (`ngx-extended-pdf-viewer`) loads a document by calling `GET /documents/{id}/download`, buffering the entire response as a `Blob` in Angular, and passing that `Blob` directly to the viewer's `[src]` input. This is a direct consequence of deliberately *not* binding `[src]` to the `Document.blobUrl` field returned by the API — that URL points at Azurite's private container, which only the API's `BlobContainerClient` credentials can read, so the browser can't fetch it directly. The tradeoff: pdf.js's normal behavior of streaming a PDF via chained HTTP range requests (rendering page 1 while later pages are still downloading, "linearized loading") is lost, since the whole file must download before rendering starts. For the MVP's expected file sizes this is imperceptible, so it wasn't chased further. A partial mitigation exists for later: `ngx-extended-pdf-viewer`'s `[src]` also accepts a URL plus `[httpHeaders]`/`[authorization]` instead of a pre-fetched `Blob`, which would let pdf.js's own range-request logic hit `/download` directly (still API-mediated, never `blobUrl`). Adopting that would require the backend to opt into range processing (e.g. `Results.Stream(..., enableRangeProcessing: true)`) and confirming the Azure Blob SDK's read stream actually supports seeking — deferred as a roadmap item below rather than implemented speculatively.
 - **Licensing**: `pdf.js` and `pdf-lib` were chosen deliberately over AGPL/commercial alternatives (e.g. iText7, Aspose) since they're permissively licensed and appropriate for an SDK-style deliverable.
-- **Bonus WASM/annotation features (redaction, signatures, bookmarks) were deprioritized**: `pdf.js` already provides WASM-accelerated rendering, which satisfies the core viewing bonus. Redaction/signature/bookmark editing were left out of the MVP to protect the timebox and are called out explicitly in the roadmap below rather than partially implemented.
+- **Basic pdf.js markup is in; deeper PDF product features were deprioritized**: `ngx-extended-pdf-viewer` already exposes highlight/draw/text/stamp/comment (and WASM-accelerated rendering). True content-stream redaction, AcroForm signature fields, bookmark *editing*, and save audit history were left out of the MVP and are called out in [`IF-I-HAD-1-MORE-DAY.md`](IF-I-HAD-1-MORE-DAY.md).
 
 ## 5. If I Had 1 More Day
 
-- Move `pdf-lib` operations to a Web Worker so large-file rotate/merge doesn't block the UI thread
-- Issue short-lived SAS tokens instead of proxying uploads through the API
-- Enable HTTP range-request passthrough for the viewer: point `[src]` at `/download` as a URL (with `[httpHeaders]`/`[authorization]` as needed) instead of a pre-fetched `Blob`, and add `Results.Stream(..., enableRangeProcessing: true)` on the backend, restoring linearized loading for large PDFs
-- Add true content-stream redaction (not just a visual overlay rectangle)
-- Add signature field placement (drag-to-place widget on a page)
-- Add bookmark tree read/write in the editor toolbar
-- Swap SQLite for Postgres with a real migration path, add optimistic concurrency on document metadata
-- Add basic auth so documents aren't globally visible to any client
-- Add a couple of automated tests: one for the upload/list API, one rendering a known PDF and asserting page count after an edit operation
+See the dedicated roadmap (auth/login, roles/admin, validation, virus scan, bulk upload, scale, deeper PDF features, ops):
+
+→ **[`IF-I-HAD-1-MORE-DAY.md`](IF-I-HAD-1-MORE-DAY.md)**

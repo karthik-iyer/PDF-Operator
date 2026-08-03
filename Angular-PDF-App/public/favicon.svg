@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="PDF Operator">
+  <defs>
+    <linearGradient id="tile" x1="2" y1="0" x2="30" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff8fab"/>
+      <stop offset="0.35" stop-color="#ff3d71"/>
+      <stop offset="0.7" stop-color="#ff5a1f"/>
+      <stop offset="1" stop-color="#ffd166"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="6" y1="4" x2="22" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.2" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- hot outer ring -->
+  <rect width="32" height="32" rx="10" fill="#1a0610"/>
+  <rect x="1" y="1" width="30" height="30" rx="9" fill="none" stroke="#ff3d71" stroke-opacity="0.55" stroke-width="1.25"/>
+
+  <g transform="rotate(-8 16 16)" filter="url(#glow)">
+    <rect x="4" y="4" width="24" height="24" rx="7" fill="url(#tile)"/>
+    <!-- gloss -->
+    <path fill="url(#shine)" d="M6 7.5c0-1.8 1.5-3.3 3.3-3.3H22c.6 0 1 .5.8 1.1C21.2 10 16.5 14 11 14.8 7.8 15.3 6 12.2 6 7.5z"/>
+    <!-- bold P -->
+    <path
+      fill="#ffffff"
+      d="M9.6 7.6h7.6c3.7 0 6.1 2.15 6.1 5.35 0 3.25-2.4 5.4-6.1 5.4h-4.3v6.45H9.6V7.6zm3.55 2.8v4.95h3.7c1.85 0 3-1.05 3-2.5s-1.15-2.45-3-2.45h-3.7z"
+    />
+  </g>
+
+  <!-- sparkles -->
+  <g fill="#ffe566">
+    <path d="M26.2 5.2l.55 1.7 1.7.55-1.7.55-.55 1.7-.55-1.7-1.7-.55 1.7-.55z"/>
+    <path d="M5.4 24.6l.4 1.2 1.2.4-1.2.4-.4 1.2-.4-1.2-1.2-.4 1.2-.4z"/>
+    <circle cx="27.5" cy="22.5" r="1.15"/>
+  </g>
+  <circle cx="4.8" cy="8.2" r="0.9" fill="#fff" fill-opacity="0.85"/>
+</svg>
