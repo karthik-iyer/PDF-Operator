@@ -1,7 +1,6 @@
 @use 'variables' as *;
 
-// Style ngx-extended-pdf-viewer (pdf.js 6.x viewsManager sidebar + page canvas + toolbar)
-// when nested under our viewer layout.
+// Style ngx-extended-pdf-viewer (pdf.js 6.x) under our sassy shell.
 
 .viewer-frame__pdf {
   ngx-extended-pdf-viewer,
@@ -14,20 +13,27 @@
   #outerContainer,
   #mainContainer,
   #viewerContainer {
-    background: $canvas-bg !important;
+    background: transparent !important;
   }
 
-  // pdf.js 6.x renamed the classic #sidebarContainer to #viewsManager.
+  #viewerContainer {
+    background:
+      radial-gradient(800px 400px at 50% 0%, rgba(255, 61, 113, 0.1), transparent 60%),
+      linear-gradient(180deg, rgba(242, 240, 244, 0.65), rgba(231, 227, 236, 0.95)) !important;
+  }
+
   #viewsManager.sidebar,
   #viewsManager.menuContainer {
     width: $thumb-panel-width !important;
     max-width: $thumb-panel-width !important;
-    background: $sidebar-bg !important;
-    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    background:
+      linear-gradient(180deg, rgba(255, 61, 113, 0.22) 0%, transparent 28%),
+      $sidebar-elevated !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
     color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
   }
 
-  // Hide the pdf.js sidebar chrome (view mode toggles). We always show thumbnails.
   #viewsManagerHeader,
   #additionalSidebarContainer,
   #toolbarSidebar,
@@ -42,7 +48,7 @@
   }
 
   #viewsManagerContent {
-    background: $sidebar-bg !important;
+    background: transparent !important;
     padding: $space-2 0 !important;
     overflow-y: auto !important;
   }
@@ -52,7 +58,7 @@
     flex-direction: column;
     align-items: center;
     gap: $space-2;
-    padding: $space-2 !important;
+    padding: $space-3 $space-2 !important;
     width: 100% !important;
   }
 
@@ -72,18 +78,27 @@
   }
 
   .thumbnail {
-    width: 140px !important;
+    width: 132px !important;
+    transition: transform $duration $ease-out;
+  }
+
+  .thumbnail:hover {
+    transform: translateY(-2px) rotate(-1deg);
   }
 
   .thumbnailSelectionRing {
-    padding: 6px !important;
-    border-radius: $radius-md !important;
+    padding: 7px !important;
+    border-radius: 14px !important;
     border: 2px solid transparent !important;
     background: transparent !important;
+    transition:
+      border-color $duration $ease-out,
+      background-color $duration $ease-out,
+      box-shadow $duration $ease-out;
   }
 
   .thumbnailImage {
-    border-radius: $radius-sm !important;
+    border-radius: 10px !important;
     background: #fff !important;
     box-shadow: $shadow-thumb !important;
     border: none !important;
@@ -91,8 +106,9 @@
 
   a.thumbnail.selected > .thumbnailSelectionRing,
   .thumbnail.selected > .thumbnailSelectionRing {
-    border-color: $accent !important;
-    background: rgba(37, 99, 235, 0.22) !important;
+    border-color: #ff8fab !important;
+    background: rgba(255, 61, 113, 0.18) !important;
+    box-shadow: 0 0 0 4px rgba(255, 61, 113, 0.16);
   }
 
   #viewerContainer {
@@ -103,16 +119,17 @@
     margin: 0 auto $space-4 !important;
     border: none !important;
     border-image: none !important;
+    border-radius: 4px !important;
     box-shadow: $shadow-paper !important;
     background-color: #fff !important;
   }
 
-  // Light toolbar that hosts zoom/page/find + annotation editors (highlight, draw, text, etc.).
   #toolbarContainer,
   #toolbarViewer {
     background: $toolbar-bg !important;
+    backdrop-filter: blur(16px) !important;
     border-bottom: 1px solid $border !important;
-    box-shadow: none !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset !important;
   }
 
   #toolbarViewer {
@@ -122,25 +139,28 @@
   #toolbarViewer .toolbarButton,
   #toolbarViewer .splitToolbarButton > .toolbarButton,
   #secondaryToolbar .toolbarButton {
-    border-radius: $radius-sm !important;
+    border-radius: 10px !important;
+    transition: background-color $duration $ease-out, color $duration $ease-out, transform $duration $ease-out !important;
   }
 
   #toolbarViewer .toolbarButton:hover,
   #toolbarViewer .splitToolbarButton > .toolbarButton:hover,
   #secondaryToolbar .toolbarButton:hover {
-    background-color: #f3f4f6 !important;
+    background-color: rgba(17, 17, 20, 0.05) !important;
+    transform: translateY(-1px);
   }
 
   #toolbarViewer .toolbarButton.toggled,
   #secondaryToolbar .toolbarButton.toggled {
-    background-color: rgba(37, 99, 235, 0.12) !important;
-    color: $accent !important;
+    background-color: $accent-soft !important;
+    color: $accent-hover !important;
   }
 
-  // Keep secondary toolbar available (overflow tools) — do not hide it.
   #secondaryToolbar {
     border: 1px solid $border !important;
     border-radius: $radius-md !important;
-    box-shadow: $shadow-card !important;
+    box-shadow: $shadow-float !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(12px);
   }
 }

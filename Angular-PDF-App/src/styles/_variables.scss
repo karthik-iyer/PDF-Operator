@@ -1,31 +1,46 @@
-// Shared design tokens for Angular-PDF-App (app shell, list, viewer, editor).
+// Sassy tokens: ink + electric coral, sharp type, confident motion.
 
-$sidebar-bg: #1a1d23;
-$toolbar-bg: #ffffff;
-$border: #e5e7eb;
-$canvas-bg: #eef0f2;
-$accent: #2563eb;
-$accent-hover: #1d4ed8;
-$text: #1f2933;
-$text-muted: #6b7280;
-$danger: #dc2626;
-$success: #16a34a;
+$sidebar-bg: #111114;
+$sidebar-elevated: #19191f;
+$toolbar-bg: rgba(255, 255, 255, 0.9);
+$surface: #ffffff;
+$border: rgba(17, 17, 20, 0.1);
+$border-strong: rgba(17, 17, 20, 0.16);
+$canvas-bg: #f2f0f4;
+$canvas-deep: #e7e3ec;
 
-$radius-sm: 6px;
-$radius-md: 8px;
+$accent: #ff3d71;
+$accent-hover: #e11d57;
+$accent-soft: rgba(255, 61, 113, 0.12);
+$accent-glow: rgba(255, 61, 113, 0.4);
+
+$text: #141418;
+$text-muted: #6b6570;
+$danger: #e11d48;
+$success: #0d9488;
+
+$radius-sm: 12px;
+$radius-md: 18px;
+$radius-lg: 26px;
 
 $space-1: 8px;
 $space-2: 12px;
 $space-3: 16px;
 $space-4: 24px;
+$space-5: 32px;
 
-$rail-width: 70px;
-$thumb-panel-width: 260px;
-$toolbar-height: 56px;
-$editor-width: 320px;
+$rail-width: 76px;
+$thumb-panel-width: 248px;
+$toolbar-height: 54px;
+$editor-width: 328px;
 
-$font-stack: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-display: 'Syne', system-ui, sans-serif;
+$font-stack: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-$shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
-$shadow-paper: 0 2px 12px rgba(0, 0, 0, 0.12);
-$shadow-thumb: 0 1px 4px rgba(0, 0, 0, 0.18);
+$shadow-card: 0 2px 0 rgba(17, 17, 20, 0.04), 0 18px 40px rgba(17, 17, 20, 0.08);
+$shadow-paper: 0 12px 40px rgba(17, 17, 20, 0.14);
+$shadow-thumb: 0 6px 18px rgba(0, 0, 0, 0.35);
+$shadow-float: 0 16px 40px rgba(17, 17, 20, 0.16);
+
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$duration: 200ms;

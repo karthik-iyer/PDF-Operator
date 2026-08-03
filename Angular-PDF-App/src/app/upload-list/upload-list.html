@@ -1,6 +1,10 @@
 <div class="upload-list">
   <header class="upload-list__header">
-    <h1>Documents</h1>
+    <div class="upload-list__titles">
+      <p class="upload-list__eyebrow">Your stash</p>
+      <h1>Documents</h1>
+      <p class="upload-list__subtitle">Drop in a PDF. Mark it up. Make it yours.</p>
+    </div>
 
     <label class="upload-button" [class.upload-button--busy]="isUploading()">
       <svg lucideUpload [size]="18"></svg>
@@ -34,7 +38,7 @@
           </tr>
         } @else if (documents().length === 0) {
           <tr>
-            <td colspan="3" class="documents-table__status">No documents uploaded yet.</td>
+            <td colspan="3" class="documents-table__status">Empty stash. Upload something spicy.</td>
           </tr>
         } @else {
           @for (doc of documents(); track doc.id) {

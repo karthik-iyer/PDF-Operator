@@ -9,7 +9,6 @@
   display: flex;
   height: 100%;
   min-height: 100vh;
-  background: $canvas-bg;
 }
 
 .app-shell__rail {
@@ -20,30 +19,60 @@
   align-items: center;
   gap: $space-2;
   padding: $space-3 0;
-  background: $sidebar-bg;
+  background:
+    radial-gradient(120px 160px at 50% 0%, rgba(255, 61, 113, 0.45), transparent 70%),
+    $sidebar-bg;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.app-shell__brand {
+  margin-bottom: $space-3;
+}
+
+.app-shell__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  font-family: $font-display;
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: -0.04em;
+  color: #fff;
+  background: linear-gradient(145deg, #ff5c8a 0%, #ff3d71 45%, #ff8c42 120%);
+  box-shadow: 0 10px 28px $accent-glow;
+  transform: rotate(-3deg);
 }
 
 .app-shell__nav {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: $radius-sm;
-  color: rgba(255, 255, 255, 0.65);
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  color: rgba(255, 255, 255, 0.55);
   text-decoration: none;
-  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+  transition:
+    background-color $duration $ease-out,
+    color $duration $ease-out,
+    transform $duration $ease-out,
+    box-shadow $duration $ease-out;
 }
 
 .app-shell__nav:hover {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
+  transform: translateY(-2px) rotate(-2deg);
 }
 
 .app-shell__nav--active {
-  background: rgba(37, 99, 235, 0.25);
-  color: #fff;
-  box-shadow: inset 0 0 0 1px $accent;
+  background: $accent-soft;
+  color: #ff8fab;
+  box-shadow: 0 0 0 1px rgba(255, 143, 171, 0.45), 0 10px 22px rgba(255, 61, 113, 0.28);
+  transform: rotate(-2deg);
 }
 
 .app-shell__content {

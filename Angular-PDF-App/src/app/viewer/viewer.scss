@@ -13,11 +13,11 @@
   flex: 1;
   min-height: 0;
   height: 100%;
-  background: $canvas-bg;
+  background: transparent;
 }
 
 .viewer-appbar {
-  height: 44px;
+  height: 52px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -25,6 +25,7 @@
   gap: $space-2;
   padding: 0 $space-3;
   background: $toolbar-bg;
+  backdrop-filter: blur(18px);
   border-bottom: 1px solid $border;
 }
 
@@ -34,16 +35,37 @@
 }
 
 .viewer-appbar__toast {
-  font-size: 0.85rem;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: $font-display;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  animation: toast-in 280ms $ease-out both;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .viewer-appbar__toast--ok {
   color: $success;
+  background: rgba(13, 148, 136, 0.12);
 }
 
 .viewer-appbar__toast--error {
   color: $danger;
+  background: rgba(225, 29, 72, 0.1);
 }
 
 .viewer-appbar__actions {
@@ -55,32 +77,56 @@
 .appbar-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 34px;
-  padding: 0 $space-2;
-  border: 1px solid $border;
-  border-radius: $radius-sm;
-  background: $toolbar-bg;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid $border-strong;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
   color: $text;
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.84rem;
+  font-weight: 650;
   cursor: pointer;
-  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+  transition:
+    background-color $duration $ease-out,
+    border-color $duration $ease-out,
+    color $duration $ease-out,
+    transform $duration $ease-out,
+    box-shadow $duration $ease-out;
 }
 
 .appbar-btn:hover:not(:disabled) {
-  background: #f3f4f6;
+  background: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(17, 17, 20, 0.08);
+}
+
+.appbar-btn--primary {
+  background: linear-gradient(145deg, #ff5c8a 0%, #ff3d71 55%, #ff8c42 140%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 10px 22px $accent-glow;
+  transform: rotate(-1deg);
+}
+
+.appbar-btn--primary:hover:not(:disabled) {
+  filter: brightness(1.04);
+  box-shadow: 0 12px 26px rgba(255, 61, 113, 0.45);
+  transform: translateY(-1px) rotate(-1deg);
 }
 
 .appbar-btn--active {
-  border-color: $accent;
-  background: rgba(37, 99, 235, 0.1);
-  color: $accent;
+  border-color: transparent;
+  background: $accent-soft;
+  color: $accent-hover;
+  box-shadow: inset 0 0 0 1px rgba(255, 61, 113, 0.28);
 }
 
 .appbar-btn:disabled {
   opacity: 0.55;
   cursor: default;
+  transform: none;
+  box-shadow: none;
 }
 
 .viewer-frame {
@@ -88,7 +134,7 @@
   min-height: 0;
   display: flex;
   flex-direction: row;
-  background: $canvas-bg;
+  background: transparent;
 }
 
 .viewer-frame__pdf {
@@ -107,8 +153,9 @@
 .viewer-status {
   margin: 3rem auto;
   color: $text-muted;
+  font-weight: 500;
 }
 
 .viewer-status--error {
-  color: #b91c1c;
+  color: $danger;
 }

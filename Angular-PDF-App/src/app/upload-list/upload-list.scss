@@ -6,24 +6,56 @@
 }
 
 .upload-list {
-  max-width: 960px;
+  max-width: 980px;
   margin: 0 auto;
-  padding: $space-4;
+  padding: $space-5 $space-4;
   color: $text;
+  animation: upload-enter 480ms $ease-out both;
+}
+
+@keyframes upload-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) rotate(-0.4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .upload-list__header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: $space-3;
-  margin-bottom: $space-3;
+  margin-bottom: $space-4;
+}
+
+.upload-list__eyebrow {
+  margin: 0 0 6px;
+  font-family: $font-display;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $accent;
 }
 
 .upload-list__header h1 {
   margin: 0;
-  font-size: 1.75rem;
-  font-weight: 650;
+  font-family: $font-display;
+  font-size: clamp(2.1rem, 3.2vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.upload-list__subtitle {
+  margin: 10px 0 0;
+  color: $text-muted;
+  font-size: 1rem;
+  max-width: 28ch;
 }
 
 .upload-button {
@@ -31,23 +63,33 @@
   display: inline-flex;
   align-items: center;
   gap: $space-1;
-  padding: 10px $space-3;
-  background-color: $accent;
+  padding: 13px 20px;
+  background: linear-gradient(145deg, #ff5c8a 0%, #ff3d71 50%, #ff8c42 140%);
   color: #fff;
-  border-radius: $radius-sm;
-  font-weight: 600;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.94rem;
   cursor: pointer;
-  transition: background-color 0.15s ease-in-out;
+  box-shadow: 0 12px 28px $accent-glow;
+  transform: rotate(-1deg);
+  transition:
+    transform $duration $ease-out,
+    box-shadow $duration $ease-out,
+    filter $duration $ease-out;
 }
 
 .upload-button:hover {
-  background-color: $accent-hover;
+  transform: translateY(-2px) rotate(-1deg);
+  box-shadow: 0 16px 34px rgba(255, 61, 113, 0.48);
+  filter: brightness(1.04);
 }
 
 .upload-button--busy {
-  background-color: #93b4f5;
+  opacity: 0.7;
   cursor: default;
   pointer-events: none;
+  transform: none;
+  box-shadow: none;
 }
 
 .upload-button input[type='file'] {
@@ -58,20 +100,22 @@
 }
 
 .error-banner {
-  margin-bottom: $space-2;
+  margin-bottom: $space-3;
   padding: $space-2 $space-3;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
+  background-color: #fff1f2;
+  border: 1px solid #fecdd3;
   border-radius: $radius-sm;
-  color: #b91c1c;
+  color: $danger;
 }
 
 .documents-card {
-  background: $toolbar-bg;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
   border: 1px solid $border;
-  border-radius: $radius-md;
+  border-radius: $radius-lg;
   box-shadow: $shadow-card;
   overflow: hidden;
+  transform: rotate(0.3deg);
 }
 
 .documents-table {
@@ -81,17 +125,23 @@
 
 .documents-table th,
 .documents-table td {
-  padding: $space-2 $space-3;
+  padding: 14px 18px;
   text-align: left;
   border-bottom: 1px solid $border;
 }
 
 .documents-table th {
-  background-color: #f9fafb;
-  font-size: 0.8rem;
+  background: rgba(255, 246, 249, 0.9);
+  font-family: $font-display;
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.08em;
   color: $text-muted;
+}
+
+.documents-table tbody tr {
+  transition: background-color $duration $ease-out;
 }
 
 .documents-table tbody tr:last-child td {
@@ -99,13 +149,13 @@
 }
 
 .documents-table tbody tr:hover {
-  background-color: #f9fafb;
+  background-color: $accent-soft;
 }
 
 .documents-table__status {
   text-align: center;
   color: $text-muted;
-  padding: $space-4 $space-3;
+  padding: $space-5 $space-3;
 }
 
 .documents-table__actions-col {
@@ -116,22 +166,23 @@
 .documents-table__actions {
   display: flex;
   justify-content: flex-end;
-  gap: $space-1;
+  gap: 6px;
 }
 
 .link-button {
   background: none;
   border: none;
   padding: 0;
-  color: $accent;
+  color: $text;
   font: inherit;
+  font-weight: 650;
   cursor: pointer;
   text-align: left;
+  transition: color $duration $ease-out;
 }
 
 .link-button:hover {
-  color: $accent-hover;
-  text-decoration: underline;
+  color: $accent;
 }
 
 .icon-button {
@@ -142,20 +193,27 @@
   height: 36px;
   padding: 0;
   background: transparent;
-  border: none;
-  border-radius: $radius-sm;
+  border: 1px solid transparent;
+  border-radius: 10px;
   color: $text-muted;
   cursor: pointer;
-  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+  transition:
+    background-color $duration $ease-out,
+    color $duration $ease-out,
+    border-color $duration $ease-out,
+    transform $duration $ease-out;
 }
 
 .icon-button:hover:not(:disabled) {
-  background: #f3f4f6;
+  background: rgba(17, 17, 20, 0.04);
+  border-color: $border;
   color: $text;
+  transform: translateY(-1px) rotate(-3deg);
 }
 
 .icon-button--danger:hover:not(:disabled) {
-  background: #fef2f2;
+  background: #fff1f2;
+  border-color: #fecdd3;
   color: $danger;
 }
 
