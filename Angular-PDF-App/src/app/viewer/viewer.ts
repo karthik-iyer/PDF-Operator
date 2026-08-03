@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
-import { LucideLayers, LucideSave } from '@lucide/angular';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { LucideArrowLeft, LucideLayers, LucideSave } from '@lucide/angular';
 import {
   NgxExtendedPdfViewerModule,
   NgxExtendedPdfViewerService,
@@ -28,7 +28,14 @@ import { extractErrorMessage } from '../shared/http-error';
  */
 @Component({
   selector: 'app-viewer',
-  imports: [NgxExtendedPdfViewerModule, EditorPanelComponent, LucideSave, LucideLayers],
+  imports: [
+    NgxExtendedPdfViewerModule,
+    EditorPanelComponent,
+    RouterLink,
+    LucideArrowLeft,
+    LucideSave,
+    LucideLayers
+  ],
   templateUrl: './viewer.html',
   styleUrl: './viewer.scss'
 })
