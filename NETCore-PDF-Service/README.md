@@ -4,6 +4,8 @@ A minimal ASP.NET Core (.NET 10) Minimal API backend for the PDF-Operator app. I
 
 > This README is a living document — update it whenever endpoints, setup steps, or configuration change.
 
+**New to the whole repo?** Start at the root [`README.md`](../README.md): [New here? Start here](../README.md#new-here-start-here), [How to use the app](../README.md#how-to-use-the-app-step-by-step), and [Prompts for Cursor](../README.md#prompts-for-cursor).
+
 ## Tech Stack
 
 | Concern | Technology |
