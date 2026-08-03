@@ -2,6 +2,14 @@
 bin/
 obj/
 
+# Node/npm dependencies and build output (applies to any Node-based project in this repo,
+# e.g. Angular-PDF-App/). Each Node project also carries its own generated .gitignore
+# (e.g. Angular-PDF-App/.gitignore) with more specific rules - these repo-root patterns are
+# a blanket safety net, mirroring the .NET bin/obj rule above.
+**/node_modules/
+**/dist/
+**/.angular/cache/
+
 # .cursor/plans is an NTFS directory junction to CursorLog/ (the canonical
 # plan location per .cursor/rules/plans-in-cursorlog.mdc), created at the repo
 # root and inside per-project workspace folders (e.g. NETCore-PDF-Service/).

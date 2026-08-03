@@ -1,0 +1,146 @@
+@use 'variables' as *;
+
+// Style ngx-extended-pdf-viewer (pdf.js 6.x viewsManager sidebar + page canvas + toolbar)
+// when nested under our viewer layout.
+
+.viewer-frame__pdf {
+  ngx-extended-pdf-viewer,
+  .zoom,
+  .html,
+  .body {
+    height: 100% !important;
+  }
+
+  #outerContainer,
+  #mainContainer,
+  #viewerContainer {
+    background: $canvas-bg !important;
+  }
+
+  // pdf.js 6.x renamed the classic #sidebarContainer to #viewsManager.
+  #viewsManager.sidebar,
+  #viewsManager.menuContainer {
+    width: $thumb-panel-width !important;
+    max-width: $thumb-panel-width !important;
+    background: $sidebar-bg !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  // Hide the pdf.js sidebar chrome (view mode toggles). We always show thumbnails.
+  #viewsManagerHeader,
+  #additionalSidebarContainer,
+  #toolbarSidebar,
+  #viewOutline,
+  #viewAttachments,
+  #viewLayers,
+  #viewThumbnail,
+  #toolbarSidebarRight,
+  #outlineOptionsContainer,
+  #currentOutlineItem {
+    display: none !important;
+  }
+
+  #viewsManagerContent {
+    background: $sidebar-bg !important;
+    padding: $space-2 0 !important;
+    overflow-y: auto !important;
+  }
+
+  #thumbnailsView {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-2 !important;
+    width: 100% !important;
+  }
+
+  #thumbnailsView.hidden {
+    display: flex !important;
+  }
+
+  #outlinesView,
+  #attachmentsView,
+  #layersView {
+    display: none !important;
+  }
+
+  #thumbnailView,
+  .thumbnail {
+    margin: 0 auto !important;
+  }
+
+  .thumbnail {
+    width: 140px !important;
+  }
+
+  .thumbnailSelectionRing {
+    padding: 6px !important;
+    border-radius: $radius-md !important;
+    border: 2px solid transparent !important;
+    background: transparent !important;
+  }
+
+  .thumbnailImage {
+    border-radius: $radius-sm !important;
+    background: #fff !important;
+    box-shadow: $shadow-thumb !important;
+    border: none !important;
+  }
+
+  a.thumbnail.selected > .thumbnailSelectionRing,
+  .thumbnail.selected > .thumbnailSelectionRing {
+    border-color: $accent !important;
+    background: rgba(37, 99, 235, 0.22) !important;
+  }
+
+  #viewerContainer {
+    padding: $space-4 !important;
+  }
+
+  #viewer .page {
+    margin: 0 auto $space-4 !important;
+    border: none !important;
+    border-image: none !important;
+    box-shadow: $shadow-paper !important;
+    background-color: #fff !important;
+  }
+
+  // Light toolbar that hosts zoom/page/find + annotation editors (highlight, draw, text, etc.).
+  #toolbarContainer,
+  #toolbarViewer {
+    background: $toolbar-bg !important;
+    border-bottom: 1px solid $border !important;
+    box-shadow: none !important;
+  }
+
+  #toolbarViewer {
+    min-height: $toolbar-height;
+  }
+
+  #toolbarViewer .toolbarButton,
+  #toolbarViewer .splitToolbarButton > .toolbarButton,
+  #secondaryToolbar .toolbarButton {
+    border-radius: $radius-sm !important;
+  }
+
+  #toolbarViewer .toolbarButton:hover,
+  #toolbarViewer .splitToolbarButton > .toolbarButton:hover,
+  #secondaryToolbar .toolbarButton:hover {
+    background-color: #f3f4f6 !important;
+  }
+
+  #toolbarViewer .toolbarButton.toggled,
+  #secondaryToolbar .toolbarButton.toggled {
+    background-color: rgba(37, 99, 235, 0.12) !important;
+    color: $accent !important;
+  }
+
+  // Keep secondary toolbar available (overflow tools) — do not hide it.
+  #secondaryToolbar {
+    border: 1px solid $border !important;
+    border-radius: $radius-md !important;
+    box-shadow: $shadow-card !important;
+  }
+}

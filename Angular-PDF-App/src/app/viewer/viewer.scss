@@ -1,0 +1,114 @@
+@use 'variables' as *;
+
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.viewer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  background: $canvas-bg;
+}
+
+.viewer-appbar {
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $space-2;
+  padding: 0 $space-3;
+  background: $toolbar-bg;
+  border-bottom: 1px solid $border;
+}
+
+.viewer-appbar__status {
+  margin-right: auto;
+  min-height: 1.2em;
+}
+
+.viewer-appbar__toast {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.viewer-appbar__toast--ok {
+  color: $success;
+}
+
+.viewer-appbar__toast--error {
+  color: $danger;
+}
+
+.viewer-appbar__actions {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+}
+
+.appbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 $space-2;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  background: $toolbar-bg;
+  color: $text;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.appbar-btn:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.appbar-btn--active {
+  border-color: $accent;
+  background: rgba(37, 99, 235, 0.1);
+  color: $accent;
+}
+
+.appbar-btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.viewer-frame {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  background: $canvas-bg;
+}
+
+.viewer-frame__pdf {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  height: 100%;
+}
+
+.viewer-frame__editor {
+  width: $editor-width;
+  flex-shrink: 0;
+  min-height: 0;
+}
+
+.viewer-status {
+  margin: 3rem auto;
+  color: $text-muted;
+}
+
+.viewer-status--error {
+  color: #b91c1c;
+}

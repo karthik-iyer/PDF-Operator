@@ -1,0 +1,24 @@
+@use 'variables' as *;
+@use 'pdf-viewer';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: $font-stack;
+  color: $text;
+  background: $canvas-bg;
+}
+
+button,
+input,
+label {
+  font: inherit;
+}

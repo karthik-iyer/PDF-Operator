@@ -1,0 +1,85 @@
+<div class="viewer">
+  @if (displaySrc() && !isLoading()) {
+    <header class="viewer-appbar">
+      <div class="viewer-appbar__status">
+        @if (saveSuccess()) {
+          <span class="viewer-appbar__toast viewer-appbar__toast--ok">Saved</span>
+        }
+        @if (saveError()) {
+          <span class="viewer-appbar__toast viewer-appbar__toast--error">{{ saveError() }}</span>
+        }
+      </div>
+
+      <div class="viewer-appbar__actions">
+        <button
+          type="button"
+          class="appbar-btn"
+          [disabled]="isSaving()"
+          title="Save markings and edits to the server"
+          (click)="saveToServer()"
+        >
+          <svg lucideSave [size]="18"></svg>
+          <span>{{ isSaving() ? 'Saving…' : 'Save' }}</span>
+        </button>
+        <button
+          type="button"
+          class="appbar-btn"
+          [class.appbar-btn--active]="editMode()"
+          [title]="editMode() ? 'Hide page tools' : 'Page tools (rotate, reorder, merge)'"
+          (click)="toggleEditMode()"
+        >
+          <svg lucideLayers [size]="18"></svg>
+          <span>Page tools</span>
+        </button>
+      </div>
+    </header>
+  }
+
+  <div class="viewer-frame">
+    @if (isLoading()) {
+      <p class="viewer-status">Loading document…</p>
+    } @else if (errorMessage()) {
+      <p class="viewer-status viewer-status--error">{{ errorMessage() }}</p>
+    } @else if (displaySrc()) {
+      <ngx-extended-pdf-viewer
+        class="viewer-frame__pdf"
+        [src]="displaySrc()!"
+        height="100%"
+        [showToolbar]="true"
+        [showSidebarButton]="false"
+        [showEditorButtons]="true"
+        [showHighlightEditor]="true"
+        [showDrawEditor]="true"
+        [showTextEditor]="true"
+        [showStampEditor]="true"
+        [showCommentEditor]="true"
+        [showDownloadButton]="true"
+        [showPrintButton]="true"
+        [showZoomButtons]="true"
+        [showPagingButtons]="true"
+        [showPreviousAndNextPageButtons]="true"
+        [showPageNumber]="true"
+        [showFindButton]="true"
+        [showScrollingButtons]="true"
+        [showSpreadButton]="true"
+        [showBookModeButton]="true"
+        [filenameForDownload]="documentMeta()?.fileName ?? 'document.pdf'"
+        [(sidebarVisible)]="sidebarVisible"
+        [(activeSidebarView)]="activeSidebarView"
+        [(page)]="page"
+        [(zoom)]="zoom"
+        [(findbarVisible)]="findbarVisible"
+        (pagesLoaded)="onPagesLoaded($event)"
+      ></ngx-extended-pdf-viewer>
+
+      @if (editMode()) {
+        <app-editor-panel
+          class="viewer-frame__editor"
+          [documentId]="id()!"
+          [fileName]="documentMeta()?.fileName ?? 'document.pdf'"
+          (saved)="onSaved($event)"
+        ></app-editor-panel>
+      }
+    }
+  </div>
+</div>

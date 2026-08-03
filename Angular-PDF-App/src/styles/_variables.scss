@@ -1,0 +1,31 @@
+// Shared design tokens for Angular-PDF-App (app shell, list, viewer, editor).
+
+$sidebar-bg: #1a1d23;
+$toolbar-bg: #ffffff;
+$border: #e5e7eb;
+$canvas-bg: #eef0f2;
+$accent: #2563eb;
+$accent-hover: #1d4ed8;
+$text: #1f2933;
+$text-muted: #6b7280;
+$danger: #dc2626;
+$success: #16a34a;
+
+$radius-sm: 6px;
+$radius-md: 8px;
+
+$space-1: 8px;
+$space-2: 12px;
+$space-3: 16px;
+$space-4: 24px;
+
+$rail-width: 70px;
+$thumb-panel-width: 260px;
+$toolbar-height: 56px;
+$editor-width: 320px;
+
+$font-stack: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+$shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-paper: 0 2px 12px rgba(0, 0, 0, 0.12);
+$shadow-thumb: 0 1px 4px rgba(0, 0, 0, 0.18);

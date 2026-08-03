@@ -1,0 +1,165 @@
+@use 'variables' as *;
+
+:host {
+  display: block;
+  flex: 1;
+}
+
+.upload-list {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: $space-4;
+  color: $text;
+}
+
+.upload-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-3;
+}
+
+.upload-list__header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 650;
+}
+
+.upload-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  padding: 10px $space-3;
+  background-color: $accent;
+  color: #fff;
+  border-radius: $radius-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.upload-button:hover {
+  background-color: $accent-hover;
+}
+
+.upload-button--busy {
+  background-color: #93b4f5;
+  cursor: default;
+  pointer-events: none;
+}
+
+.upload-button input[type='file'] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.error-banner {
+  margin-bottom: $space-2;
+  padding: $space-2 $space-3;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: $radius-sm;
+  color: #b91c1c;
+}
+
+.documents-card {
+  background: $toolbar-bg;
+  border: 1px solid $border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.documents-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.documents-table th,
+.documents-table td {
+  padding: $space-2 $space-3;
+  text-align: left;
+  border-bottom: 1px solid $border;
+}
+
+.documents-table th {
+  background-color: #f9fafb;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: $text-muted;
+}
+
+.documents-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.documents-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.documents-table__status {
+  text-align: center;
+  color: $text-muted;
+  padding: $space-4 $space-3;
+}
+
+.documents-table__actions-col {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.documents-table__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-1;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: $accent;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.link-button:hover {
+  color: $accent-hover;
+  text-decoration: underline;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: $radius-sm;
+  color: $text-muted;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+.icon-button:hover:not(:disabled) {
+  background: #f3f4f6;
+  color: $text;
+}
+
+.icon-button--danger:hover:not(:disabled) {
+  background: #fef2f2;
+  color: $danger;
+}
+
+.icon-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

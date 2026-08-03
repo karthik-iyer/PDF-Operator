@@ -1,0 +1,18 @@
+<div class="app-shell">
+  <nav class="app-shell__rail" aria-label="Main">
+    <a
+      routerLink="/"
+      routerLinkActive="app-shell__nav--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="app-shell__nav"
+      title="Documents"
+      aria-label="Documents"
+    >
+      <svg lucideFileText [size]="22"></svg>
+    </a>
+  </nav>
+
+  <main class="app-shell__content">
+    <router-outlet />
+  </main>
+</div>

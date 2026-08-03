@@ -1,0 +1,64 @@
+<div class="editor-panel">
+  <h2 class="editor-panel__title">Edit document</h2>
+
+  @if (editorState.errorMessage()) {
+    <p class="error-banner">{{ editorState.errorMessage() }}</p>
+  }
+
+  <div class="editor-panel__merge">
+    <label class="merge-button" [class.merge-button--busy]="editorState.isBusy()">
+      Merge PDF…
+      <input type="file" accept=".pdf,application/pdf" [disabled]="editorState.isBusy()" (change)="onMergeFileSelected($event)" />
+    </label>
+  </div>
+
+  <ul class="page-list">
+    @for (page of pages(); track page.index) {
+      <li class="page-list__row">
+        <span class="page-list__label">Page {{ page.pageNumber }}@if (page.rotation) { <span class="page-list__rotation"> (rotated {{ page.rotation }}°)</span> }</span>
+
+        <div class="page-list__actions">
+          <button type="button" title="Rotate left" (click)="rotate(page.index, -90)">⟲</button>
+          <button type="button" title="Rotate right" (click)="rotate(page.index, 90)">⟳</button>
+          <button type="button" title="Move up" [disabled]="page.index === 0" (click)="moveUp(page.index)">↑</button>
+          <button type="button" title="Move down" [disabled]="page.index === pages().length - 1" (click)="moveDown(page.index)">↓</button>
+          <button type="button" title="Extract page" (click)="extractPage(page.index)">⇩</button>
+          <button
+            type="button"
+            class="page-list__delete"
+            title="Delete page"
+            [disabled]="pages().length <= 1"
+            (click)="deletePage(page.index)"
+          >
+            ✕
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+
+  <div class="editor-panel__save">
+    @if (saveError()) {
+      <p class="error-banner">{{ saveError() }}</p>
+    }
+    @if (exportError()) {
+      <p class="error-banner">{{ exportError() }}</p>
+    }
+    @if (saveSuccess()) {
+      <p class="save-success">Saved successfully.</p>
+    }
+    <div class="editor-panel__actions">
+      <button
+        type="button"
+        class="export-button"
+        [disabled]="isSaving() || isExporting() || editorState.isBusy()"
+        (click)="exportLocal()"
+      >
+        {{ isExporting() ? 'Exporting…' : 'Export' }}
+      </button>
+      <button type="button" class="save-button" [disabled]="isSaving() || isExporting() || editorState.isBusy()" (click)="save()">
+        {{ isSaving() ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+  </div>
+</div>

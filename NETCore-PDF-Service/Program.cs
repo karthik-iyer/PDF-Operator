@@ -36,6 +36,15 @@ builder.Services.AddSingleton(_ =>
 
 builder.Services.AddScoped<IDocumentStorageService, DocumentStorageService>();
 
+// Origins come from config (empty by default) rather than being hardcoded, so a real frontend
+// origin can be added per-environment later without touching this file.
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+        policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod());
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -56,6 +65,8 @@ if (app.Environment.IsDevelopment())
     // Scoped to Development since Swagger UI itself isn't mapped in other environments.
     app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
 }
+
+app.UseCors("Frontend");
 
 app.MapDocumentEndpoints();
 

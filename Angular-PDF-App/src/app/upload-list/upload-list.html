@@ -1,0 +1,76 @@
+<div class="upload-list">
+  <header class="upload-list__header">
+    <h1>Documents</h1>
+
+    <label class="upload-button" [class.upload-button--busy]="isUploading()">
+      <svg lucideUpload [size]="18"></svg>
+      <span>{{ isUploading() ? 'Uploading…' : 'Upload PDF' }}</span>
+      <input
+        type="file"
+        accept="application/pdf,.pdf"
+        [disabled]="isUploading()"
+        (change)="onFileSelected($event)"
+      />
+    </label>
+  </header>
+
+  @if (errorMessage()) {
+    <div class="error-banner" role="alert">{{ errorMessage() }}</div>
+  }
+
+  <div class="documents-card">
+    <table class="documents-table">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Uploaded At</th>
+          <th class="documents-table__actions-col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading()) {
+          <tr>
+            <td colspan="3" class="documents-table__status">Loading…</td>
+          </tr>
+        } @else if (documents().length === 0) {
+          <tr>
+            <td colspan="3" class="documents-table__status">No documents uploaded yet.</td>
+          </tr>
+        } @else {
+          @for (doc of documents(); track doc.id) {
+            <tr>
+              <td>
+                <button type="button" class="link-button" (click)="onOpen(doc)">
+                  {{ doc.fileName }}
+                </button>
+              </td>
+              <td>{{ doc.uploadedAt | date: 'medium' }}</td>
+              <td class="documents-table__actions">
+                <button
+                  type="button"
+                  class="icon-button"
+                  title="Download"
+                  aria-label="Download {{ doc.fileName }}"
+                  [disabled]="downloadingId() === doc.id"
+                  (click)="onDownload(doc)"
+                >
+                  <svg lucideDownload [size]="18"></svg>
+                </button>
+                <button
+                  type="button"
+                  class="icon-button icon-button--danger"
+                  title="Delete"
+                  aria-label="Delete {{ doc.fileName }}"
+                  [disabled]="deletingId() === doc.id"
+                  (click)="onDelete(doc)"
+                >
+                  <svg lucideTrash2 [size]="18"></svg>
+                </button>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
