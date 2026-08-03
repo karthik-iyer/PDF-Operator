@@ -1,6 +1,18 @@
 <div class="viewer">
-  @if (displaySrc() && !isLoading()) {
-    <header class="viewer-appbar">
+  <header class="viewer-appbar">
+    <a routerLink="/" class="viewer-back" title="Back to documents">
+      <span class="viewer-back__icon" aria-hidden="true">
+        <svg lucideArrowLeft [size]="18"></svg>
+      </span>
+      <span class="viewer-back__label">Documents</span>
+    </a>
+
+    <div class="viewer-appbar__meta">
+      @if (documentMeta()?.fileName) {
+        <span class="viewer-appbar__filename" [title]="documentMeta()!.fileName">
+          {{ documentMeta()!.fileName }}
+        </span>
+      }
       <div class="viewer-appbar__status">
         @if (saveSuccess()) {
           <span class="viewer-appbar__toast viewer-appbar__toast--ok">Saved</span>
@@ -9,7 +21,9 @@
           <span class="viewer-appbar__toast viewer-appbar__toast--error">{{ saveError() }}</span>
         }
       </div>
+    </div>
 
+    @if (displaySrc() && !isLoading()) {
       <div class="viewer-appbar__actions">
         <button
           type="button"
@@ -32,8 +46,8 @@
           <span>Page tools</span>
         </button>
       </div>
-    </header>
-  }
+    }
+  </header>
 
   <div class="viewer-frame">
     @if (isLoading()) {

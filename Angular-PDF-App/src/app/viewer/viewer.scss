@@ -21,7 +21,6 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
   gap: $space-2;
   padding: 0 $space-3;
   background: $toolbar-bg;
@@ -29,9 +28,70 @@
   border-bottom: 1px solid $border;
 }
 
+.viewer-back {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px 0 6px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #fff;
+  font-family: $font-display;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(145deg, #ff5c8a 0%, #ff3d71 50%, #ff8c42 130%);
+  box-shadow: 0 8px 20px $accent-glow;
+  transform: rotate(-1.5deg);
+  transition:
+    transform $duration $ease-out,
+    box-shadow $duration $ease-out,
+    filter $duration $ease-out;
+}
+
+.viewer-back__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.viewer-back:hover {
+  transform: translateY(-1px) rotate(-1.5deg);
+  box-shadow: 0 12px 26px rgba(255, 61, 113, 0.5);
+  filter: brightness(1.05);
+}
+
+.viewer-back:active {
+  transform: translateY(0) rotate(-1deg);
+}
+
+.viewer-appbar__meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.viewer-appbar__filename {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 650;
+  font-size: 0.9rem;
+  color: $text;
+}
+
 .viewer-appbar__status {
-  margin-right: auto;
   min-height: 1.2em;
+  flex-shrink: 0;
 }
 
 .viewer-appbar__toast {
@@ -69,9 +129,11 @@
 }
 
 .viewer-appbar__actions {
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: $space-1;
+  flex-shrink: 0;
 }
 
 .appbar-btn {

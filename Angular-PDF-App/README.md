@@ -6,9 +6,9 @@ Angular SPA for the PDF-Operator app: upload/list documents against **NETCore-PD
 
 **New to the whole repo?** Use the root guide first:
 
-- [New here? Start here](../README.md#new-here-start-here) — install + run Azurite, API, and this app
-- [How to use the app (step by step)](../README.md#how-to-use-the-app-step-by-step) — upload → view → annotate → Page tools
-- [Prompts for Cursor](../README.md#prompts-for-cursor) — copy-paste Agent prompts to install, build, and run
+- [New here? Start here](../README.md#new-here-start-here) — fresh machine: install Git / .NET 10 / Node, then Azurite + API + this app
+- [How to use the app (step by step)](../README.md#how-to-use-the-app-step-by-step) — library + full viewer feature map (plugin toolbar, Save, Page tools, Export)
+- [Prompts for Cursor](../README.md#prompts-for-cursor) — copy-paste Agent prompts (including “no tools installed yet”)
 
 ## Tech Stack
 
@@ -181,12 +181,55 @@ Full payload samples and status codes: [`NETCore-PDF-Service/README.md`](../NETC
 
 ## Features checklist
 
-- **Library:** upload PDF, list by upload time, download, delete, navigate to viewer
-- **Viewer:** thumbnail sidebar, paging, zoom, find, print, download (ngx toolbar)
-- **Annotations:** highlight, draw, text, stamp, comment (ngx editor tools)
-- **Persistence:** Save writes the current PDF (with annotations) back to the API
-- **Page tools:** rotate, reorder, delete page, merge PDF, local export, save via pdf-lib
-- **Shell / styling:** custom SCSS tokens, icon rail, restyled list + viewer chrome
+### Library (`/`)
+
+- Upload PDF, list by upload time, download, delete, open viewer
+
+### Viewer page (`/viewer/:id`) — detailed
+
+Full walkthrough also lives in the root README: [How to use the app → Viewer page](../README.md#b-viewer-page-viewerid--full-feature-map).
+
+**App chrome**
+
+| Control | Purpose |
+|---|---|
+| **Documents** back button | Return to library (`/`) — always shown |
+| File name | Current document title |
+| Saved / error toast | Feedback after app-bar Save |
+| **Save** | Persist current PDF + annotations to API (`PUT`) |
+| **Page tools** | Toggle pdf-lib structural side panel |
+
+**Thumbnail strip**
+
+- Thumbnail navigation (outline/attachments/layers UI hidden); click to jump pages
+
+**ngx-extended-pdf-viewer toolbar (enabled)**
+
+| Group | Options |
+|---|---|
+| Editors / annotations | Highlight, Draw, Text, Stamp, Comment (`showEditorButtons` + each editor flag) |
+| Zoom | Zoom buttons |
+| Paging | Prev/next, page number |
+| Find | Text search |
+| Print | Print |
+| Download | Local download from the plugin (not a server save) |
+| Layout | Scrolling modes, spread, book mode |
+
+Plugin sidebar button is disabled; our strip stays on thumbs.
+
+**Page tools panel (pdf-lib)**
+
+| Control | Purpose |
+|---|---|
+| Merge PDF… | Append another PDF’s pages |
+| ⟲ / ⟳ | Rotate page ±90° |
+| ↑ / ↓ | Reorder pages |
+| ⇩ Extract | Download one page as a PDF |
+| ✕ Delete | Remove page (min 1 page) |
+| **Export** | Download full edited PDF locally |
+| **Save** | Upload edited PDF to the API |
+
+**Shell / styling:** custom SCSS tokens, icon rail, restyled list + viewer chrome
 
 ## Troubleshooting
 
